@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}This Post Title{% endblock title %}
+{% block style_css %}
+<link rel='stylesheet' href='{% static "blog/post-detail.css"%}'>
+
+{% endblock style_css %}
+{% block content %}
+
+<section id="all-posts">
+    <section id="summary">
+        <h2>
+            Post Title
+        </h2>
+        <article>
+            <img src="{% static 'blog/images/book.jpg'%}" alt="Post Title"/>
+            <address>By Islam</address>
+            <div>
+                Last Updated On <time>October 10th</time>
+            </div>
+        </article>
+    </section>
+      
+    <main>
+        <p>
+            {% lorem 9 b random %}</p>
+            </main>
+</section>
+{% endblock content %}

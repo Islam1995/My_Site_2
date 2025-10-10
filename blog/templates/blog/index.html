@@ -1,6 +1,36 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}My Blog{% endblock title %}
+{% block style_css %}
+    <link rel='stylesheet' href='{% static "blog/post.css"%}'>
+    <link rel='stylesheet' href='{% static "blog/index.css"%}'>
+{% endblock style_css %}
 {% block content %}
-<h1>Welcome to my website</h1>
+
+
+<section id="welcome">
+    <header>
+        <img src="{% static "blog/images/book.jpg" %}" alt="Islam The - Author Of This Blog"/>
+        <h2>Islam's Bolg</h2>
+    </header>
+    
+    <p>Hi, I am islam and I love to blog about tech and the world!</p>
+</section>
+    
+<section id="latest-posts">
+    <h2>My Latest Thoughts</h2>
+    <ul>
+        {% include "blog/includes/post.html" %}
+     
+    </ul>
+</section>
+
+<section id="about">
+    <h2>What I Do</h2>
+    <p>I love programming I loove help people I love programming I loove help people I love programming I loove help people </p>
+    <p>My goal to achieve Growing in programming I love programming I loove help people</p>
+</section>
+
+
 {% endblock content %}
