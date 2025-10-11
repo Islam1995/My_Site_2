@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}This Post Title{% endblock title %}
+{% block title %}{{post.title}}{% endblock title %}
 {% block style_css %}
 <link rel='stylesheet' href='{% static "blog/post-detail.css"%}'>
 
@@ -10,20 +10,25 @@
 <section id="all-posts">
     <section id="summary">
         <h2>
-            Post Title
+           {{post.title}}
         </h2>
+        <div>
+            {%for tag in post_tages%}
+            <span class='tag'>{{tag.caption}}</span>
+            {%endfor%}
+        </div>
         <article>
-            <img src="{% static 'blog/images/book.jpg'%}" alt="Post Title"/>
-            <address>By Islam</address>
+            <img src="{{post.image.url}}" alt="{{post.title}}"/>
+            <address>By <a href="mailto:{{post.author.email}}">{{post.author}}</a></address>
             <div>
-                Last Updated On <time>October 10th</time>
+                Last Updated On <time>{{post.date|date:"D d M Y"}}</time>
             </div>
         </article>
     </section>
       
     <main>
         <p>
-            {% lorem 9 b random %}</p>
+            {{post.content}}</p>
             </main>
 </section>
 {% endblock content %}
