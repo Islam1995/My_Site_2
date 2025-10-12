@@ -1,6 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404 , redirect
 from django.views.generic import ListView , DeleteView
+from django.views import View
 from .models import Post
+from .forms import CommentForm
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 # Create your views here.
 
 #class of starting page
@@ -34,15 +38,74 @@ class AllPostView(ListView):
 #     all_posts = Post.objects.all().order_by('-date')
 #     return render(request,'blog/all-posts.html',{'posts':all_posts})
 
-class SinglePostView(DeleteView):
-    template_name = 'blog/post-detail.html'
-    model = Post
-    slug_field = 'slug'
+class SinglePostView(View):
+ 
+    def get(self, request, slug):
+        post = get_object_or_404(Post, slug=slug)
+        context = {
+            'post':post,
+            "post_tags": post.tag.all(),
+            "comment_form":CommentForm(),
+            "comments":post.comments.all().order_by("-id")
+        }
+        return render(request, 'blog/post-detail.html',context)
+    
+    def post(self,request,slug):
+        post = get_object_or_404(Post, slug=slug)
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect('post-detail-page',slug=slug)
+        #HttpResponseRedirect(reverse("post-detail-page"), args=[slug])
+        context = {
+            'post':post,
+            "post_tags": post.tag.all(),
+            "comment_form":CommentForm,
+            "comments":post.comments.all().order_by("-id")
+        }
 
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        context['post_tages'] = self.object.tag.all()
-        return context
+        return render(request, 'blog/post-detail.html',context)
+    
+
+class ReadLater(View):
+    def get(self,request):
+        stored_posts = request.session.get("stored_posts")
+
+        context ={}
+
+        if stored_posts is None or len(stored_posts) == 0:
+            context["posts"] = []
+            context["has_posts"] = False
+        else:
+            posts = Post.objects.filter(id__in =stored_posts)
+            context["posts"] = posts
+            context["has_posts"] = True
+        return render(request, 'blog/stored-posts.html', context)
+    
+    def post(self,request):
+        stored_posts = request.session.get("stored_posts")
+
+        if stored_posts is None:
+            stored_posts = []
+        
+        post_id = int(request.POST['post_id'])
+        
+        if post_id not in stored_posts:
+            stored_posts.append(post_id)
+            request.session['stored_posts'] = stored_posts
+        
+        return redirect("/")
+
+
+    # def get_context_data(self, **kwargs):
+    #     context =  super().get_context_data(**kwargs)
+    #     context['post_tages'] = self.object.tag.all()
+    #     context['comment_form'] = CommentForm()
+    #     return context
+
+    
     
 
 # def single_post(request, slug):

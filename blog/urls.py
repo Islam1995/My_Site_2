@@ -8,5 +8,6 @@ urlpatterns = [
     #path('posts',views.posts, name='posts-page'),
     path('posts/<slug:slug>',views.SinglePostView.as_view(),name='post-detail-page'),
     # path('posts/<slug:slug>',views.single_post,name='post-detail-page'),
+    path("read-later", views.ReadLater.as_view(), name="read-later")
 ]
 # handler404='blog.views.custom_404'
